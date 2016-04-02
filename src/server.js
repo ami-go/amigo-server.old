@@ -51,6 +51,7 @@ server.use(expressJwt({
   /* jscs:enable requireCamelCaseOrUpperCaseIdentifiers */
 }));
 server.use(passport.initialize());
+server.use(passport.session());
 
 server.get('/login/facebook',
   passport.authenticate('facebook', { scope: ['email', 'user_location'], session: false })
@@ -65,6 +66,37 @@ server.get('/login/facebook/return',
   }
 );
 
+server.get('/login/twitter',
+  passport.authenticate('twitter'));
+
+server.get('/login/twitter/callback', 
+  passport.authenticate('twitter', { failureRedirect: '/login' }),
+  function(req, res) {
+    const expiresIn = 60 * 60 * 24 * 180; // 180 days
+    const token = jwt.sign(req.user, auth.jwt.secret, { expiresIn });
+    res.cookie('id_token', token, { maxAge: 1000 * expiresIn, httpOnly: true });
+    res.redirect('/');
+  });
+
+server.get('/login/google',
+  passport.authenticate('google', { scope: ['profile'] }));
+
+server.get('/login/google/callback', 
+  passport.authenticate('google', { failureRedirect: '/login' }),
+  function(req, res) {
+    const expiresIn = 60 * 60 * 24 * 180; // 180 days
+    const token = jwt.sign(req.user, auth.jwt.secret, { expiresIn });
+    res.cookie('id_token', token, { maxAge: 1000 * expiresIn, httpOnly: true });
+    res.redirect('/');
+  });
+
+server.get('/profile',
+  //require('connect-ensure-login').ensureLoggedIn(),
+  function(req, res) {
+    console.log(req);
+    res.send(req.user);
+  });
+  
 //
 // Register API middleware
 // -----------------------------------------------------------------------------

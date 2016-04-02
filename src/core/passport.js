@@ -15,6 +15,8 @@
 
 import passport from 'passport';
 import { Strategy as FacebookStrategy } from 'passport-facebook';
+import { Strategy as TwitterStrategy } from 'passport-twitter';
+import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import db from './db';
 import { auth as config } from '../config';
 
@@ -107,5 +109,40 @@ passport.use(new FacebookStrategy({
     }
   }).catch(done);
 }));
+
+
+passport.use(new TwitterStrategy({
+    consumerKey: config.twitter.key,
+    consumerSecret: config.twitter.secret,
+    callbackURL: "https://amigo-server-minjung.c9users.io/login/twitter/callback"
+  },
+  function(token, tokenSecret, profile, cb) {
+    //User.findOrCreate({ twitterId: profile.id }, function (err, user) {
+    //  return cb(err, user);
+    //});
+    console.log(config.twitter.key);
+    return cb(null, profile);
+  }
+));
+
+passport.use(new GoogleStrategy({
+    clientID: config.google.id,
+    clientSecret: config.google.secret,
+    callbackURL: "https://amigo-server-minjung.c9users.io/login/google/callback"
+  },
+  function(accessToken, refreshToken, profile, cb) {
+    let temp = {name: profile.displayName, id: profile.id};
+    console.log(temp);
+    return cb(null, temp);
+  }
+));
+
+passport.serializeUser(function(user, cb) {
+  cb(null, user);
+});
+
+passport.deserializeUser(function(obj, cb) {
+  cb(null, obj);
+});
 
 export default passport;

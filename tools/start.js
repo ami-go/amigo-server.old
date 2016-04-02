@@ -88,7 +88,7 @@ async function start() {
         if (!err) {
           const bs = Browsersync.create();
           bs.init({
-            ...(DEBUG ? {} : { notify: false, ui: false }),
+            ...(DEBUG ? {ui: { port: 8081, weinre: { port: 8083 } }} : { notify: false, ui: false }),
 
             proxy: {
               target: host,
