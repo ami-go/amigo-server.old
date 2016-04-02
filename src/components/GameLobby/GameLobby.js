@@ -10,6 +10,7 @@
 import React, { Component, PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './GameLobby.scss';
+//import WGo from 'wgo';
 
 const title = 'Game Lobby';
 
@@ -22,6 +23,16 @@ class GameLobby extends Component {
   componentWillMount() {
     this.context.onSetTitle(title);
   }
+  
+  componentDidMount() {
+    console.log('mounted');
+    let WGo = require('wgo');
+    this.player = new WGo.BasicPlayer(this.refs.board, {
+        sgfFile: "game.sgf"
+    });
+    console.log(WGo);
+    console.log(this.player);
+  }
 
   render() {
     return (
@@ -29,6 +40,7 @@ class GameLobby extends Component {
         <div className={s.container}>
           <h1>{title}</h1>
           <p>Lobby</p>
+          <div id="lobby-player" ref="board" className={s.player}></div>
         </div>
       </div>
     );
