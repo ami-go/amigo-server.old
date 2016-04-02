@@ -1,0 +1,6 @@
+{
+  "name": "GameLobby",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./GameLobby.js"
+}
